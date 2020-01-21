@@ -3,4 +3,5 @@ print ('hello world')
 
     
 def funcname(self, parameter_list):
+    print ('laji')
     pass
