@@ -4,5 +4,6 @@ print ('hello world')
     
 def funcname(self, parameter_list):
     print ('xiao laji')
+    print ('tang qi ye yu')
     print ('laji')
     pass
