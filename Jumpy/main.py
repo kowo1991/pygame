@@ -35,6 +35,7 @@ class Game:
         # load spritesheet image
         self.img_dir= path.join(self.dir, 'img')
         self.spritesheet = Spritesheet(Path(path.join(self.img_dir, SPSRITESHEET)).as_posix())
+
         # cload images
         self.cloud_images = []
         for i in range(1,4):
@@ -63,7 +64,8 @@ class Game:
             c = Cloud(self)
             c.rect.y += 500
         self.mob_timer = 0   
-        
+        self.topest_platform = Platform(self, *PLAtFORM_LIST[-1])
+
         self.run()
 
     def run(self):
@@ -142,11 +144,17 @@ class Game:
         if len(self.platforms) == 0:
             self.playing = False
 
+
+        # update topest platform
+        for plat in self.platforms:
+            if plat.rect.y < self.topest_platform.rect.y:
+                self.topest_platform = plat
+
         # spawn new platforms to keep same average number
         while len(self.platforms) < 6:
             width = random.randrange(50,100)
             Platform(self, random.randrange(0, WIDTH-width),
-                     random.randrange(-75,-30))
+                     random.randrange(-250+self.topest_platform.rect.y, -100+self.topest_platform.rect.y))
 
         
         
