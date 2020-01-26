@@ -1,4 +1,4 @@
-# Jumpy! - platform game
+# Shmup! - shoot game
 import pygame as pg
 import random
 from settings import *
