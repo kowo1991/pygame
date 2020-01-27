@@ -82,29 +82,7 @@ class Player(pg.sprite.Sprite):
                 Bullet(self.game, self.rect.centerx-15, self.rect.top)
                 Bullet(self.game, self.rect.centerx+15, self.rect.top)
             self.game.shoot_sound.play()
-        '''
-        now = pg.time.get_ticks()
-        if now-self.last_shot > self.shoot_delay:
-            self.last_shot = now
-            bullet = Bullet(self.game, self.rect.centerx, self.rect.top)
-            self.game.shoot_sound.play()
-        '''
-    '''
-    def normal_shoot(self):
-        now = pg.time.get_ticks()
-        if now-self.last_shot > self.shoot_delay:
-            self.last_shot = now
-            bullet = Bullet(self.game, self.rect.centerx, self.rect.top)
-            self.game.shoot_sound.play()
 
-    def double_shoot(self):
-        now = pg.time.get_ticks()
-        if now-self.last_shot > self.shoot_delay:
-            self.last_shot = now
-            bullet = Bullet(self.game, self.rect.centerx-15, self.rect.top)
-            bullet = Bullet(self.game, self.rect.centerx+15, self.rect.top)
-            self.game.shoot_sound.play()
-    '''
 
 class Bullet(pg.sprite.Sprite):
     def __init__(self, game, x, y):  
