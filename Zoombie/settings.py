@@ -1,0 +1,48 @@
+import pygame as pg
+vec = pg.Vector2
+#define colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+LIGHTGREY = (100, 100, 100)
+DARKGREY = (40, 40,40)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+YELLOW = (255, 255, 0)
+CYAN = (0, 255, 255)
+
+# game settings
+WIDTH = 1024
+HEIGHT = 768
+FPS = 60
+TITLE = "Zoombie"
+BGCOLOR = LIGHTGREY
+TITLE_SIZE = 64
+GRIDWIDTH = WIDTH / TITLE_SIZE
+GRIDHEIGHT = HEIGHT / TITLE_SIZE
+WALL_IMAGE = 'PNG/Tiles/tile_171.png'
+
+# Player settings
+PLAYER_HEALTH = 100
+PLAYER_SPEED = 300
+PLAYER_ROT_SPEED = 250
+PLAYER_IMAGE = 'PNG/Man Blue/manBlue_gun.png'
+PLAYER_HIT_RECT = pg.Rect(0,0,35,35)
+BARREL_OFFSET = vec(30,10)
+BULLET_DAMAGE = 10
+
+
+# Mob settings
+MOB_HEALTH = 100
+MOB_IMAGE = 'PNG/Zombie 1/zoimbie1_hold.png'
+MOB_SPEED = [150, 100, 75, 125]
+MOB_HIT_RECT = pg.Rect(0,0,30,30)
+MOB_DAMAGE = 10
+MOB_KNOCKBACK = 20
+AVOID_RADIUS = 50
+
+# Gun settings
+BULLET_SPEED = 500
+BULLET_LIFETIME = 1000
+BULLET_RATE = 150
+KICKBACK = 200
+GUN_SPREAD = 5
