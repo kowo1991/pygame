@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="50" height="30" tilewidth="64" tileheight="64" infinite="0" nextlayerid="9" nextobjectid="102">
+<map version="1.2" tiledversion="1.3.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="50" height="30" tilewidth="64" tileheight="64" infinite="0" nextlayerid="9" nextobjectid="104">
  <tileset firstgid="1" source="Kenney Topdown Pack.tsx"/>
  <layer id="1" name="ground" width="50" height="30">
   <data encoding="csv">
@@ -139,7 +139,7 @@
  </layer>
  <objectgroup id="8" name="obstacles">
   <object id="2" name="wall" x="767" y="447" width="318" height="63"/>
-  <object id="3" name="player" x="660" y="339" width="27" height="27"/>
+  <object id="3" name="health_pack" x="534" y="463" width="27" height="27"/>
   <object id="4" name="wall" x="766" y="513" width="67" height="124"/>
   <object id="6" name="wall" x="768" y="704" width="63" height="383"/>
   <object id="8" name="wall" x="834" y="1025" width="893" height="62"/>
@@ -226,5 +226,6 @@
   <object id="99" name="wall" x="3185.83" y="18" width="9.66667" height="1893.33"/>
   <object id="100" name="wall" x="5.66833" y="1907.17" width="3183.33" height="9.66667"/>
   <object id="101" name="wall" x="1.83333" y="18.6683" width="9.66667" height="1893.33"/>
+  <object id="102" name="player" x="662.5" y="338.5" width="27" height="27"/>
  </objectgroup>
 </map>

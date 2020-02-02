@@ -41,38 +41,72 @@ class Game:
         self.dir = path.dirname(__file__)
         self.img_dir = path.join(self.dir, 'img')
         self.map_dir = path.join(self.dir, 'map')
-        #self.map = Map(path.join(self.dir, 'map2.txt'))
+        self.snd_dir = path.join(self.dir, 'snd')
+        
+        # Map loading
         self.map = TiledMap(Path(path.join(self.map_dir, 'level1.tmx')).as_posix())
+
+        # Image loading
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
         self.player_img = pg.image.load(Path(path.join(self.img_dir, PLAYER_IMAGE)).as_posix())
         self.mob_img = pg.image.load(Path(path.join(self.img_dir, MOB_IMAGE)).as_posix())
-
         self.wall_img = pg.image.load(Path(path.join(self.img_dir, WALL_IMAGE)).as_posix())
         self.wall_img = pg.transform.smoothscale(self.wall_img, (TITLE_SIZE, TITLE_SIZE))
+
+        self.gun_flashes = []
+        for img in MUZZLE_FLASHES:
+            self.gun_flashes.append(pg.image.load(Path(path.join(self.img_dir, img)).as_posix()))
+
+        self.item_images = {}
+        for item in ITEM_IMAGES:
+            self.item_images[item] = pg.image.load(Path(path.join(self.img_dir, ITEM_IMAGES[item])).as_posix())
+
+        # Sound loading
+        pg.mixer.music.load(path.join(self.snd_dir, BG_MUSIC))
+
+        self.player_hit_sounds = []
+        for snd in PLAYER_HIT_SOUNDS:
+            print (Path(path.join(self.snd_dir, snd)).as_posix())
+            snd = pg.mixer.Sound(Path(path.join(self.snd_dir, snd)).as_posix())
+            snd.set_volume(0.6)
+            self.player_hit_sounds.append(snd)
+        
+        self.effect_sounds = {}
+        for type in EFFECT_SOUNDS:
+            self.effect_sounds[type] = pg.mixer.Sound(Path(path.join(self.snd_dir, EFFECT_SOUNDS[type])).as_posix())
+
+        self.gun_sounds = {}
+        for type in GUN_SOUNDS:
+            self.gun_sounds[type] = pg.mixer.Sound(Path(path.join(self.snd_dir, GUN_SOUNDS[type])).as_posix())
+
+        self.zombie_moan_sounds = []
+        for snd in ZOMBIE_MOAN_SOUNDS:
+            snd = pg.mixer.Sound(Path(path.join(self.snd_dir, snd)).as_posix())
+            snd.set_volume(0.5)
+            self.zombie_moan_sounds.append(snd)
+
     def new(self):
         # start a new game
-        self.all_sprites = pg.sprite.Group() 
+        self.all_sprites = pg.sprite.LayeredUpdates() 
         self.walls = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group( )
-        '''
-        for row, tiles in enumerate(self.map.data):
-            for col, tile in enumerate(tiles):
-                if tile == '1':
-                    Wall(self, col, row)
-                if tile == 'P':
-                    self.player = Player(self, col, row)
-                if tile == 'M':
-                    Mob(self, col, row)
-        '''
+        self.items = pg.sprite.Group()
+        self.player = Player(self, 100, 100)
+
         for tile_object in self.map.tmxdata.objects:
+            obj_center = vec(   tile_object.x + tile_object.width / 2, 
+                                tile_object.y + tile_object.height / 2)
+
             if tile_object.name == 'player':
-                self.player = Player(self, tile_object.x, tile_object.y)
+                self.player.set_pos( obj_center.x, obj_center.y)
             if tile_object.name == 'wall':
-                Obstacle(self, tile_object.x,tile_object.y, tile_object.width, tile_object.height)
+                Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == 'zombie':
-                Mob(self, tile_object.x, tile_object.y)
+                Mob(self, obj_center.x, obj_center.y)
+            if tile_object.name == 'health_pack':
+                Item(self, obj_center, 'health_pack')
 
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
@@ -81,6 +115,8 @@ class Game:
     def run(self):
         # Game Loop
         self.playing = True
+        pg.mixer.music.play(loops = -1)
+        self.effect_sounds['level_start'].play()
         while self.playing:
             self.dt = self.clock.tick(FPS) / 1000
             self.events()
@@ -90,6 +126,14 @@ class Game:
         # Game loop - Update
         self.all_sprites.update() 
         self.camera.update(self.player)
+
+        # player hit items
+        hits = pg.sprite.spritecollide(self.player, self.items, False)
+        for hit in hits:
+            if hit.type == 'health_pack' and self.player.health < PLAYER_HEALTH:
+                hit.kill()
+                self.effect_sounds['health_pack'].play()
+                self.player.add_health(HEALTH_PACK_AMOUNT)
 
         # bullets hit mobs
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
@@ -107,6 +151,8 @@ class Game:
         
         if hits:
             self.player.pos += vec(MOB_KNOCKBACK, 0).rotate(-hits[0].rot)
+            if random() < 0.5:
+                choice(self.player_hit_sounds).play()
 
     def events(self):
         # Game Loop - events
