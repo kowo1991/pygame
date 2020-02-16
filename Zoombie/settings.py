@@ -41,12 +41,28 @@ MOB_KNOCKBACK = 20
 AVOID_RADIUS = 50
 DETECT_RADIUS = 400
 
+
 # Gun settings
-BULLET_SPEED = 500
-BULLET_LIFETIME = 1000
-BULLET_RATE = 150
-KICKBACK = 200
-GUN_SPREAD = 5
+WEAPONS = {}
+WEAPONS['pistol'] = {   'bullet_speed':500,
+                        'bullet_lifetime':1000,
+                        'rate':250,
+                        'kickback':200,
+                        'spread':5,
+                        'damage':10,
+                        'bullet_size':'lg',
+                        'bullet_count':1
+                    } 
+
+WEAPONS['shotgun'] = {  'bullet_speed':400,
+                        'bullet_lifetime':500,
+                        'rate':900,
+                        'kickback':300,
+                        'spread':20,
+                        'damage':5,
+                        'bullet_size':'sm',
+                        'bullet_count':12
+                    } 
 
 # Effects
 MUZZLE_FLASHES = [  'PNG/Puff/WhitePuff00.png',
@@ -58,7 +74,13 @@ MUZZLE_FLASHES = [  'PNG/Puff/WhitePuff00.png',
                     'PNG/Puff/WhitePuff06.png',
                     'PNG/Puff/WhitePuff07.png',
                     'PNG/Puff/WhitePuff08.png']
+SPLATS = [  'PNG/Effect/SPLAT/splat3.png',
+            'PNG/Effect/SPLAT/splat3.png',
+            'PNG/Effect/SPLAT/splat3.png' ]
+
 FLASH_DURATION = 40
+DAMAGE_AHPHA = [i for i in range(0,255, 55)]
+
 
 # Layers
 WALL_LAYER = 1
@@ -69,16 +91,23 @@ ITEM_LAYER = 1
 EFFECTS_LAYER = 4
 
 # Items
-ITEM_IMAGES = {'health_pack' : 'PNG/Item/health_pack.png'}
+ITEM_IMAGES = { 'health_pack' : 'PNG/Item/health_pack.png',
+                'obj_shotgun' : 'PNG/Item/obj_shotgun.png'}
 HEALTH_PACK_AMOUNT = 20
 BOB_RANGE = 20
 BOB_SPEED = 0.6
 
+
+
 # Sounds
 BG_MUSIC = 'espionage.ogg'
 PLAYER_HIT_SOUNDS = ['player/pain1.wav', 'player/pain2.wav' ,'player/pain3.wav', 'player/pain4.wav']
-ZOMBIE_MOAN_SOUNDS = ['zombie/moan1.wav', 'zombie/moan2.wav' ,'zombie/moan3.wav']
+ZOMBIE_MOAN_SOUNDS = ['zombie/moan/moan1.wav', 'zombie/moan/moan2.wav' ,'zombie/moan/moan3.wav']
+ZOMBIE_HIT_SOUNDS = [   'zombie/hit/impactsplat05.wav',
+                        'zombie/hit/impactsplat05.wav']
+
 EFFECT_SOUNDS = {   'level_start' : 'level_start.wav',
-                    'health_pack': 'health_pack.wav'}
-GUN_SOUNDS = {  'cg1' : 'gun/cg1.wav',
-                'shotgun': 'gun/shotgun.wav'}
+                    'health_pack': 'health_pack.wav',
+                    'pickup': 'weapload.wav'}
+WEAPON_SOUNDS = {   'pistol' : 'weapon/pistol.wav',
+                    'shotgun': 'weapon/shotgun.wav'}

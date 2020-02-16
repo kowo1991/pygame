@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="50" height="30" tilewidth="64" tileheight="64" infinite="0" nextlayerid="9" nextobjectid="104">
+<map version="1.2" tiledversion="1.3.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="50" height="30" tilewidth="64" tileheight="64" infinite="0" nextlayerid="9" nextobjectid="126">
  <tileset firstgid="1" source="Kenney Topdown Pack.tsx"/>
  <layer id="1" name="ground" width="50" height="30">
   <data encoding="csv">
@@ -139,7 +139,7 @@
  </layer>
  <objectgroup id="8" name="obstacles">
   <object id="2" name="wall" x="767" y="447" width="318" height="63"/>
-  <object id="3" name="health_pack" x="534" y="463" width="27" height="27"/>
+  <object id="3" name="health_pack" x="1170" y="979" width="27" height="27"/>
   <object id="4" name="wall" x="766" y="513" width="67" height="124"/>
   <object id="6" name="wall" x="768" y="704" width="63" height="383"/>
   <object id="8" name="wall" x="834" y="1025" width="893" height="62"/>
@@ -227,5 +227,25 @@
   <object id="100" name="wall" x="5.66833" y="1907.17" width="3183.33" height="9.66667"/>
   <object id="101" name="wall" x="1.83333" y="18.6683" width="9.66667" height="1893.33"/>
   <object id="102" name="player" x="662.5" y="338.5" width="27" height="27"/>
+  <object id="104" name="obj_shotgun" x="1228.5" y="586.5" width="27" height="27"/>
+  <object id="105" name="zombie" x="1771.5" y="835" width="33" height="30"/>
+  <object id="108" name="zombie" x="1753.5" y="1387" width="33" height="30"/>
+  <object id="109" name="zombie" x="1475.5" y="1307" width="33" height="30"/>
+  <object id="110" name="zombie" x="2059.5" y="245" width="33" height="30"/>
+  <object id="111" name="zombie" x="409.5" y="1121" width="33" height="30"/>
+  <object id="112" name="zombie" x="1205.5" y="809" width="33" height="30"/>
+  <object id="113" name="zombie" x="2061.5" y="1131" width="33" height="30"/>
+  <object id="114" name="zombie" x="1741.5" y="1183" width="33" height="30"/>
+  <object id="115" name="zombie" x="1461.5" y="1461" width="33" height="30"/>
+  <object id="116" name="zombie" x="403.5" y="1571" width="33" height="30"/>
+  <object id="117" name="zombie" x="837.5" y="1819" width="33" height="30"/>
+  <object id="118" name="zombie" x="417.5" y="57" width="33" height="30"/>
+  <object id="119" name="zombie" x="1199.5" y="39" width="33" height="30"/>
+  <object id="120" name="zombie" x="1915.5" y="43" width="33" height="30"/>
+  <object id="121" name="zombie" x="2323.5" y="83" width="33" height="30"/>
+  <object id="122" name="health_pack" x="1062.5" y="1572.5" width="27" height="27"/>
+  <object id="123" name="health_pack" x="38.5" y="1858.5" width="27" height="27"/>
+  <object id="124" name="health_pack" x="2182.5" y="530.5" width="27" height="27"/>
+  <object id="125" name="health_pack" x="2436.5" y="148.5" width="27" height="27"/>
  </objectgroup>
 </map>

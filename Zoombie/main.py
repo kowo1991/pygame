@@ -29,6 +29,8 @@ class Game:
     def __init__(self):
         super().__init__()
         # initialize a game window
+        pg.mixer.pre_init(44100, -16, 1, 2048)
+        pg.init()
         pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
@@ -43,8 +45,16 @@ class Game:
         self.map_dir = path.join(self.dir, 'map')
         self.snd_dir = path.join(self.dir, 'snd')
         
+        #dim screen
+        self.dim_screen = pg.Surface(self.screen.get_size()).convert_alpha()
+        self.dim_screen.fill((0,0,0,180))
+
         # Map loading
         self.map = TiledMap(Path(path.join(self.map_dir, 'level1.tmx')).as_posix())
+
+        # Font loading
+        self.title_font = Path(path.join(self.img_dir, 'Zombie.ttf')).as_posix()
+        self.hud_font = Path(path.join(self.img_dir, 'Impacted2.0.ttf')).as_posix()
 
         # Image loading
         self.map_img = self.map.make_map()
@@ -62,6 +72,12 @@ class Game:
         for item in ITEM_IMAGES:
             self.item_images[item] = pg.image.load(Path(path.join(self.img_dir, ITEM_IMAGES[item])).as_posix())
 
+        self.splat_images = []
+        for img in SPLATS:
+            img = pg.image.load(Path(path.join(self.img_dir,img)).as_posix())
+            img = pg.transform.scale(img, (64,64))
+            self.splat_images.append(img)
+
         # Sound loading
         pg.mixer.music.load(path.join(self.snd_dir, BG_MUSIC))
 
@@ -74,17 +90,27 @@ class Game:
         
         self.effect_sounds = {}
         for type in EFFECT_SOUNDS:
-            self.effect_sounds[type] = pg.mixer.Sound(Path(path.join(self.snd_dir, EFFECT_SOUNDS[type])).as_posix())
+            snd = pg.mixer.Sound(Path(path.join(self.snd_dir, EFFECT_SOUNDS[type])).as_posix())
+            snd.set_volume(4)
+            self.effect_sounds[type] = snd
 
-        self.gun_sounds = {}
-        for type in GUN_SOUNDS:
-            self.gun_sounds[type] = pg.mixer.Sound(Path(path.join(self.snd_dir, GUN_SOUNDS[type])).as_posix())
+        self.weapon_sounds = {}
+        for type in WEAPON_SOUNDS:
+            snd = pg.mixer.Sound(Path(path.join(self.snd_dir, WEAPON_SOUNDS[type])).as_posix())
+            if type == 'pistol':
+                snd.set_volume(0.5)
+            self.weapon_sounds[type] = snd
 
         self.zombie_moan_sounds = []
         for snd in ZOMBIE_MOAN_SOUNDS:
             snd = pg.mixer.Sound(Path(path.join(self.snd_dir, snd)).as_posix())
             snd.set_volume(0.5)
             self.zombie_moan_sounds.append(snd)
+
+        self.zombie_hit_sounds = []
+        for snd in ZOMBIE_HIT_SOUNDS:
+            snd = pg.mixer.Sound(Path(path.join(self.snd_dir, snd)).as_posix())
+            self.zombie_hit_sounds.append(snd)
 
     def new(self):
         # start a new game
@@ -108,8 +134,12 @@ class Game:
             if tile_object.name == 'health_pack':
                 Item(self, obj_center, 'health_pack')
 
+            if tile_object.name == 'obj_shotgun':
+                Item(self, obj_center, 'obj_shotgun')
+  
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
+        self.paused = False
         self.run()
 
     def run(self):
@@ -120,8 +150,12 @@ class Game:
         while self.playing:
             self.dt = self.clock.tick(FPS) / 1000
             self.events()
-            self.update()
+            if not self.paused:
+                self.update()
             self.draw()
+
+
+
     def update(self):
         # Game loop - Update
         self.all_sprites.update() 
@@ -134,12 +168,18 @@ class Game:
                 hit.kill()
                 self.effect_sounds['health_pack'].play()
                 self.player.add_health(HEALTH_PACK_AMOUNT)
+            if hit.type == 'obj_shotgun':
+                hit.kill()
+                self.effect_sounds['pickup'].play()
+                self.player.weapon = 'shotgun'
 
         # bullets hit mobs
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
-        for hit in hits:
-            hit.health -= BULLET_DAMAGE
-            hit.vel = vec(0,0)
+        for mob in hits:
+            #hit.health -= WEAPONS[self.player.weapon]['damage']*len(hits[hit])
+            for bullet in hits[mob]:
+                mob.health -= bullet.damage
+            mob.vel = vec(0,0)
 
         # mobs hit player
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
@@ -150,6 +190,7 @@ class Game:
                 self.playing = False
         
         if hits:
+            self.player.hit()
             self.player.pos += vec(MOB_KNOCKBACK, 0).rotate(-hits[0].rot)
             if random() < 0.5:
                 choice(self.player_hit_sounds).play()
@@ -165,11 +206,21 @@ class Game:
                     self.quit()
                 if event.key == pg.K_h:
                     self.draw_debug = not self.draw_debug
+                if event.key == pg.K_p:
+                    self.paused = not self.paused
 
     def quit(self):
         if self.playing:
             self.playing = False
             self.running = False
+
+    def draw_text(self, text, font_name, size, color, x, y):
+
+        font = pg.font.Font(font_name, size)
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (x,y)
+        self.screen.blit(text_surface, text_rect)
 
     def draw(self):
         # Game Loop -draw
@@ -185,10 +236,14 @@ class Game:
         if self.draw_debug: 
             for wall in self.walls:
                 pg.draw.rect(self.screen, CYAN, self.camera.apply_rect(wall.rect), 1)
-
+        
+        if self.paused:
+            self.screen.blit(self.dim_screen, (0,0))
+            self.draw_text('Paused', self.title_font, 105, RED, WIDTH / 2, HEIGHT / 2)
 
         # HUD functions
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
+        self.draw_text('Zombies:{}'.format(len(self.mobs)), self.hud_font, 30, WHITE, WIDTH-100, 10 )
 
         # *after* drawing everything , flip the display
         pg.display.flip()
@@ -207,7 +262,24 @@ class Game:
         pass
     def show_go_screen(self):
         # game over/continue
-        pass
+        self.screen.fill(BLACK)
+        self.draw_text("GAME OVER", self.title_font, 100, RED, 
+                        WIDTH / 2, HEIGHT *1 / 4 )
+        self.draw_text("Press a key to start", self.title_font, 75, WHITE,
+                         WIDTH / 2, HEIGHT * 2 / 4)
+        pg.display.flip()
+        self.wait_for_key()
+    def wait_for_key(self):
+        pg.event.wait()
+        waiting = True
+        while waiting:
+            self.clock.tick(FPS)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.quit()
+                if event.type == pg.KEYUP:
+                    waiting = False
 
 g=  Game()
 g.show_start_screen()
